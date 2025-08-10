@@ -1,0 +1,33 @@
+name: Deploy InsightStream to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: SSH into EC2 and deploy
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST_INSIGHTSTREAM }}
+          username: ${{ secrets.EC2_USER_INSIGHTSTREAM }}
+          key: ${{ secrets.EC2_SSH_KEY_INSIGHTSTREAM }}
+          script: |
+            cd insightstream
+            echo "Pulling latest changes..."
+            git pull origin main
+
+            echo "Building containers..."
+            docker compose build
+
+            echo "Starting services..."
+            docker compose up -d
+
+            echo "✅ Deployment complete."

@@ -1,0 +1,54 @@
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #f4f7fb;
+}
+
+.app-container {
+  text-align: center;
+}
+
+header {
+  background: #1f2937;
+  color: white;
+  padding: 2rem;
+}
+
+header h1 {
+  margin-bottom: 0.5rem;
+  font-size: 2.5rem;
+}
+
+header p {
+  margin: 0;
+  opacity: 0.85;
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin: 2rem auto;
+  max-width: 1000px;
+}
+
+.card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  width: 280px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+footer {
+  margin-top: 2rem;
+  padding: 1rem;
+  font-size: 0.9rem;
+  color: #555;
+}
