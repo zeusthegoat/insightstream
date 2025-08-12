@@ -13,17 +13,21 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: SSH into EC2 and deploy
+      - name: SSH into EC2 and deploy updated services
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.EC2_HOST_INSIGHTSTREAM }}
           username: ${{ secrets.EC2_USER_INSIGHTSTREAM }}
           key: ${{ secrets.EC2_SSH_KEY_INSIGHTSTREAM }}
           script: |
-            if [ ! -d "insightstream" ]; then
-              git clone https://github.com/zeusthegoat/insightstream.git
-            fi
             cd insightstream
+            echo "Pulling latest changes..."
             git pull origin main
-            docker compose build
-            docker compose up -d
+
+            echo "Rebuilding backend and frontend only..."
+            docker compose build backend frontend
+
+            echo "Restarting backend and frontend without affecting db..."
+            docker compose up -d --no-deps backend frontend
+
+            echo "✅ Deployment complete."
