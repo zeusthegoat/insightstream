@@ -1,4 +1,4 @@
-name: Deploy InsightStream to EC2
+name: Deploy to EC2 on push
 
 on:
   push:
@@ -20,14 +20,10 @@ jobs:
           username: ${{ secrets.EC2_USER_INSIGHTSTREAM }}
           key: ${{ secrets.EC2_SSH_KEY_INSIGHTSTREAM }}
           script: |
+            if [ ! -d "insightstream" ]; then
+              git clone https://github.com/zeusthegoat/insightstream.git
+            fi
             cd insightstream
-            echo "Pulling latest changes..."
             git pull origin main
-
-            echo "Building containers..."
             docker compose build
-
-            echo "Starting services..."
             docker compose up -d
-
-            echo "✅ Deployment complete."

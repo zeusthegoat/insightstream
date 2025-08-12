@@ -1,8 +1,15 @@
-FROM node:18
+# Stage 1: Build frontend
+FROM node:18 AS build
 
 WORKDIR /app
-COPY package.json package-lock.json ./
+COPY frontend/package.json frontend/package-lock.json ./
 RUN npm install
 
-COPY . .
-CMD ["npm", "start"]
+COPY frontend/ ./
+RUN npm run build
+
+# Stage 2: Serve with a lightweight web server
+FROM nginx:alpine
+COPY --from=build /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

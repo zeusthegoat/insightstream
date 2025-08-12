@@ -1,39 +1,48 @@
-version: "3.8"
+version: "3.9"
 
 services:
   backend:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: backend
     ports:
       - "5000:5000"
-    networks:
-      - insight_net
+    environment:
+      - DATABASE_URL=postgresql://insight_user:insight_pass@db:5432/insightdb
     depends_on:
       - db
+    networks:
+      - app-network
 
   frontend:
-    build: ./frontend
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: frontend
     ports:
-      - "3000:3000"
-    networks:
-      - insight_net
+      - "3000:80"
     depends_on:
       - backend
+    networks:
+      - app-network
 
   db:
-    image: postgres:13
+    image: postgres:15
+    container_name: db
     environment:
-      POSTGRES_DB: insightstream
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+      POSTGRES_USER: insight_user
+      POSTGRES_PASSWORD: insight_pass
+      POSTGRES_DB: insightdb
     ports:
       - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     networks:
-      - insight_net
-
-networks:
-  insight_net:
+      - app-network
 
 volumes:
   postgres_data:
+
+networks:
+  app-network:
